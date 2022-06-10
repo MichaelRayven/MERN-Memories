@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, AppBar, Typography, Grow, Grid } from  '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useDispatch } from "react-redux";
 
+import { getPosts } from './actions/posts'
 import Posts from './components/posts/Posts'
 import Form from './components/form/Form'
 
@@ -10,6 +12,12 @@ import memories from './images/memories.png'
 const Image = styled('img')``;
 
 const App = () => {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getPosts());
+    }, [dispatch])
+
     return (
         <div>
             <Container maxWidth="lg">
