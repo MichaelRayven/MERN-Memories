@@ -9,11 +9,11 @@ import postRoutes from './routes/posts.js'
 
 const app = express();
 
-app.use('/posts', postRoutes);
-
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
+
+app.use('/posts', postRoutes);
 
 const CONNECTION_URL = `mongodb://${process.env.USER_NAME}:${process.env.PASSWORD}@192.168.1.4:27017/?authMechanism=DEFAULT`;
 const PORT = process.env.PORT;
