@@ -14,7 +14,7 @@ const Form = () => {
     })
     const dispatch = useDispatch();
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         dispatch(createPost(postData))
@@ -73,19 +73,19 @@ const Form = () => {
                     value={postData.tags}
                     onChange={event => {setPostData({ ...postData, tags: event.target.value })}}
                 />
+                <DivStyled sx={{
+                    width: '97%',
+                    margin: '10px 0'
+                }}>
+                    <FileBase 
+                        type="file"
+                        multiple={false}
+                        onDone={base64 => {setPostData({ ...postData, selectedFile: base64 })}}
+                        />
+                </DivStyled>
+                <Button sx={{marginBottom: 2}} type="submit" variant="contained" color="primary" size="large" fullWidth>Submit</Button>
+                <Button onClick={clear} variant="contained" color="secondary" size="small" fullWidth>Clear</Button>
             </FormStyled>
-            <DivStyled sx={{
-                width: '97%',
-                margin: '10px 0'
-            }}>
-                <FileBase 
-                    type="file"
-                    multiple={false}
-                    onDone={base64 => {setPostData({ ...postData, selectedFile: base64 })}}
-                />
-            </DivStyled>
-            <Button sx={{marginBottom: 2}} type="submit" variant="contained" color="primary" size="large" fullWidth>Submit</Button>
-            <Button onClick={clear} variant="contained" color="secondary" size="small" fullWidth>Clear</Button>
         </Paper>
     )
 }

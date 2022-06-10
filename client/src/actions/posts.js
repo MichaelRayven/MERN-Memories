@@ -13,9 +13,10 @@ export const getPosts = () => async (dispatch) => {
 
 export const createPost = (post) => async (dispatch) => {
     try {
+        post.tags = post.tags.split(' ')
         const { data } = await api.createPost(post)
         const action = { type: 'CREATE', payload: data }
-
+        
         dispatch(action)
     } catch (error) {
         console.error(error.message)
