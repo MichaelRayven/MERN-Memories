@@ -1,26 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField , Button, Typography, Paper } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import FileBase from 'react-file-base64';
-import { useDispatch } from 'react-redux'
-import { createPost } from '../../actions/posts'
+import { useDispatch, useSelector } from 'react-redux'
+import { createPost, updatePost } from '../../actions/posts'
 
 const FormStyled = styled('form')``;
 const DivStyled = styled('div')``;
 
-const Form = () => {
-    const [postData, setPostData] = useState({
-        creator: '', title: '', message: '', tags: '', selectedFile: ''
-    })
+const Form = ({ currentId, setCurrentId }) => {
+    const [postData, setPostData] = useState({creator: '', title: '', message: '', tags: '', selectedFile: ''})
     const dispatch = useDispatch();
+
+    const post = useSelector(state => currentId !== 0 ? state.posts.find(post => post._id === currentId) : null)
+
+    useEffect(() => {
+        if(post) {
+            setPostData({ ...post, tags: post.tags?.reduce((acc, tag) => acc + ` #${tag}`, "").trimStart() })
+        }
+    }, [post])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        dispatch(createPost(postData))
+        if (currentId === 0) {
+            dispatch(createPost(postData))
+        } else {
+            dispatch(updatePost(currentId, postData))
+        }
+        clear()
     }
 
     const clear = () => {
+        setCurrentId(0);
         setPostData({
             creator: '', title: '', message: '', tags: '', selectedFile: ''
         })
@@ -36,7 +48,7 @@ const Form = () => {
                 justifyContent: 'center'
             }}
             onSubmit={handleSubmit}>
-                <Typography variant="h6">Creating a Memory</Typography>
+                <Typography variant="h6">{currentId === 0 ? "Creating a Memory" : "Refining a memory"}</Typography>
                 <TextField 
                     sx={{margin: 1}}
                     name="creator" 
@@ -59,6 +71,9 @@ const Form = () => {
                     sx={{margin: 1}}
                     name="message" 
                     variant="outlined" 
+                    multiline
+                    rows={4}
+                    placeholder="Tell us how was your day..."
                     label="Message" 
                     fullWidth 
                     value={postData.message}
@@ -80,7 +95,7 @@ const Form = () => {
                     <FileBase 
                         type="file"
                         multiple={false}
-                        onDone={base64 => {setPostData({ ...postData, selectedFile: base64 })}}
+                        onDone={({ base64 }) => {setPostData({ ...postData, selectedFile: base64 })}}
                         />
                 </DivStyled>
                 <Button sx={{marginBottom: 2}} type="submit" variant="contained" color="primary" size="large" fullWidth>Submit</Button>
